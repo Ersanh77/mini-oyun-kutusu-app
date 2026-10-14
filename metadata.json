@@ -1,0 +1,6 @@
+{
+  "name": "Mini Oyun Kutusu",
+  "description": "15 yaş altı çocuklar için güvenli, renkli ve eğlenceli mini oyun koleksiyonu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
