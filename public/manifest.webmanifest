@@ -1,0 +1,19 @@
+{
+  "id": "/mini-oyun-kutusu-app/",
+  "name": "Çocuklar İçin Mini Oyun Kutusu",
+  "short_name": "Mini Oyun Kutusu",
+  "description": "3-7 yaş çocuklar için eğitici ve eğlenceli mini oyunlar.",
+  "start_url": "/mini-oyun-kutusu-app/",
+  "scope": "/mini-oyun-kutusu-app/",
+  "display": "standalone",
+  "background_color": "#FFF9E8",
+  "theme_color": "#FFB800",
+  "icons": [
+    {
+      "src": "/mini-oyun-kutusu-app/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
