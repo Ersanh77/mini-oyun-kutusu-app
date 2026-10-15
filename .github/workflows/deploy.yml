@@ -7,14 +7,11 @@ on:
       - master
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: 'pages'
   cancel-in-progress: false
@@ -40,8 +37,21 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Create 404.html fallback for SPA
-        run: cp dist/index.html dist/404.html
+      - name: Debug - dist içeriğini kontrol et
+        run: |
+          echo "=== dist klasörü ==="
+          ls -la dist/
+          echo ""
+          echo "=== index.html (ilk 30 satır) ==="
+          head -30 dist/index.html
+          echo ""
+          echo "=== assets klasörü var mı? ==="
+          ls -la dist/assets/ || echo "HATA: assets klasörü yok!"
+
+      - name: Create 404.html + .nojekyll
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
