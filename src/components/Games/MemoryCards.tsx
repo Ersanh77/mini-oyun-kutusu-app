@@ -44,6 +44,16 @@ export default function MemoryCards({ onBack, onComplete }: { onBack: () => void
     }
   };
 
+  const resetGame = () => {
+    const shuffled = [...FRUITS, ...FRUITS].sort(() => Math.random() - 0.5);
+    setCards(shuffled);
+    setFlipped([]);
+    setMatched([]);
+    setScore(0);
+    setTimeLeft(60);
+    setFinished(false);
+  };
+
   if (finished) {
     const stars = Math.floor(score / 50);
     return (
@@ -54,8 +64,14 @@ export default function MemoryCards({ onBack, onComplete }: { onBack: () => void
           <p className="text-2xl font-bold mb-2 text-sky-800 flex items-center justify-center gap-2"><Trophy className="text-amber-500" /> Skor: {score}</p>
           <p className="text-xl font-semibold mb-8 text-amber-600 flex items-center justify-center gap-2">⭐ Kazanılan Yıldız: {stars}</p>
           <div className="flex flex-col gap-3">
-            <button onClick={() => window.location.reload()} className="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-bold text-lg shadow-lg transition-transform active:scale-95">TEKRAR OYNA</button>
-            <button onClick={() => onComplete(score)} className="w-full py-4 bg-sky-100 hover:bg-sky-200 text-sky-900 rounded-2xl font-bold text-lg transition-transform active:scale-95">OYUNLAR MENÜSÜ</button>
+            <button onClick={resetGame} className="w-full py-4 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl font-bold text-lg shadow-lg transition-transform active:scale-95 cursor-pointer">TEKRAR OYNA</button>
+            <button onClick={() => {
+              if (stars > 0) {
+                const cur = parseInt(localStorage.getItem('stars') || '0', 10);
+                localStorage.setItem('stars', (cur + stars).toString());
+              }
+              onComplete(score);
+            }} className="w-full py-4 bg-sky-100 hover:bg-sky-200 text-sky-900 rounded-2xl font-bold text-lg transition-transform active:scale-95 cursor-pointer">OYUNLAR MENÜSÜ</button>
           </div>
         </motion.div>
       </div>

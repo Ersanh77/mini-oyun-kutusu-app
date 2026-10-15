@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import GameMenu from './components/GameMenu';
 import BalloonPop from './components/Games/BalloonPop';
 import Match3Game from './components/Games/Match3Game';
@@ -13,30 +13,83 @@ export default function App() {
   const [totalStars, setTotalStars] = useState(0);
   const [lastScore, setLastScore] = useState(0);
 
-  useEffect(() => {
+  const refreshStars = useCallback(() => {
     const stars = localStorage.getItem('stars');
-    if (stars) setTotalStars(parseInt(stars));
+    if (stars !== null) {
+      setTotalStars(parseInt(stars, 10) || 0);
+    }
   }, []);
 
-  const handleGameComplete = (score: number) => {
-    const newStars = Math.floor(score / 50);
-    const updatedStars = totalStars + newStars;
-    setTotalStars(updatedStars);
-    localStorage.setItem('stars', updatedStars.toString());
+  useEffect(() => {
+    refreshStars();
+  }, [refreshStars]);
+
+  const handleAwardStars = useCallback((starsToAdd: number) => {
+    if (starsToAdd <= 0) return;
+    const current = parseInt(localStorage.getItem('stars') || '0', 10);
+    const updated = current + starsToAdd;
+    localStorage.setItem('stars', updated.toString());
+    setTotalStars(updated);
+  }, []);
+
+  const handleBackToMenu = useCallback(() => {
+    refreshStars();
+    setView('menu');
+  }, [refreshStars]);
+
+  const handleGameComplete = useCallback((score: number) => {
     setLastScore(score);
+    refreshStars();
     setView('results');
-  };
+  }, [refreshStars]);
 
   return (
     <>
       {view === 'menu' && <GameMenu onSelect={setView} totalStars={totalStars} />}
-      {view === 'balloon' && <BalloonPop onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'match' && <Match3Game onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'stars' && <PlatformerGame onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'puzzle' && <PuzzleGame onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'fish' && <FishingGame onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'memory' && <MemoryCards onBack={() => setView('menu')} onComplete={handleGameComplete} />}
-      {view === 'fruit' && <FruitCollector onBack={() => setView('menu')} onComplete={handleGameComplete} />}
+      {view === 'balloon' && (
+        <BalloonPop 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+          onAwardStars={handleAwardStars} 
+        />
+      )}
+      {view === 'match' && (
+        <Match3Game 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+        />
+      )}
+      {view === 'stars' && (
+        <PlatformerGame 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+        />
+      )}
+      {view === 'puzzle' && (
+        <PuzzleGame 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+        />
+      )}
+      {view === 'fish' && (
+        <FishingGame 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+        />
+      )}
+      {view === 'memory' && (
+        <MemoryCards 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+        />
+      )}
+      {view === 'fruit' && (
+        <FruitCollector 
+          onBack={handleBackToMenu} 
+          onComplete={handleGameComplete} 
+          onAwardStars={handleAwardStars}
+        />
+      )}
       {view === 'results' && (
         <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-b from-amber-50 via-orange-50 to-sky-100 select-none">
           <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-amber-200 text-center max-w-md w-full flex flex-col items-center">
@@ -50,8 +103,8 @@ export default function App() {
             </div>
 
             <button 
-              onClick={() => setView('menu')} 
-              className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+              onClick={handleBackToMenu} 
+              className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
               🏠 Ana Menüye Dön
             </button>

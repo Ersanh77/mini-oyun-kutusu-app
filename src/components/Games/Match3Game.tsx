@@ -143,6 +143,13 @@ export default function Match3Game({ onBack, onComplete }: { onBack: () => void,
     setIsProcessing(false);
   };
 
+  const resetGame = () => {
+    setGrid(createBoard());
+    setScore(0);
+    setTimeLeft(60);
+    setSelected(null);
+  };
+
   if (timeLeft === 0) {
     const stars = Math.floor(score / 150);
     return (
@@ -153,8 +160,14 @@ export default function Match3Game({ onBack, onComplete }: { onBack: () => void,
           <p className="text-2xl font-bold mb-2 text-emerald-800">Skorun: {score}</p>
           <p className="text-xl font-semibold mb-8 text-amber-600">⭐ Kazandığın Yıldız: {stars}</p>
           <div className="flex flex-col gap-3">
-            <button onClick={() => window.location.reload()} className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg transition-transform active:scale-95">Tekrar Oyna</button>
-            <button onClick={onBack} className="w-full py-4 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-2xl font-bold text-lg transition-transform active:scale-95">Ana Menü</button>
+            <button onClick={resetGame} className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg transition-transform active:scale-95 cursor-pointer">Tekrar Oyna</button>
+            <button onClick={() => {
+              if (stars > 0) {
+                const cur = parseInt(localStorage.getItem('stars') || '0', 10);
+                localStorage.setItem('stars', (cur + stars).toString());
+              }
+              onBack();
+            }} className="w-full py-4 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-2xl font-bold text-lg transition-transform active:scale-95 cursor-pointer">Ana Menü</button>
           </div>
         </motion.div>
       </div>
